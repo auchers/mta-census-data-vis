@@ -5,7 +5,15 @@
 *_checkpoints
 
 # Turnstile data
+data/
 data/Turnstiles/Turnstile_Usage_Data__2020.csv
 
 # QGIS Files
 *.qgz
+
+# Design
+*.xd
+design/
+
+# App
+node_modules/
