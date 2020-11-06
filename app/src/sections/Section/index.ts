@@ -2,15 +2,15 @@ import { Store } from 'redux';
 import { select, Selection } from 'd3';
 import 'intersection-observer';
 import scrollama from 'scrollama';
+import * as A from '../../redux/actions/creators';
 import { SectionDataType, State } from '../../utils/types';
 import './style.scss';
-import { CLASSES as C, SECTIONS as S } from '../../utils/constants';
+import { CLASSES as C, SECTIONS as S, KEYS } from '../../utils/constants';
+import { getSectionHash } from '../../utils/helpers';
 
 interface Props { data: SectionDataType,
   store: Store,
   sectionName: string }
-
-const fadeOutThreshold = 0.7;
 /** Scaffolding for reusable section code */
 export default class Section {
   store: Store<State>
@@ -29,11 +29,15 @@ export default class Section {
 
   section: string;
 
+  header: any;
+
   constructor({ data, store, sectionName }: Props) {
     this.store = store;
     this.data = data;
     this.scroller = scrollama();
     this.section = sectionName;
+    this.onStepEnter = this.onStepEnter.bind(this);
+    this.onStepExit = this.onStepExit.bind(this);
   }
 
   init() {
@@ -54,7 +58,7 @@ export default class Section {
     this.scroller.setup({
       step: `#${this.section} .${C.STEP}`,
       progress: true,
-      offset: 0.8,
+      offset: 0.2, // how far from the top to trigger a step
     })
       .onStepEnter(this.onStepEnter)
       .onStepProgress(this.onStepProgress)
@@ -63,17 +67,25 @@ export default class Section {
 
   onStepEnter({ element, index, direction }) {
     // console.log('enter: element, index, direction', element, index, direction);
+    // const data = select(element).data()[0] as StepDataType;
+    this.steps.classed(C.ACTIVE, false);
+    select(element).classed(C.ACTIVE, true);
+
+    // update url as we scroll
+    this.store.dispatch(A.setLocation(element.getAttribute(KEYS.DATA_STEP)));
     select(element).classed(C.ACTIVE, true);
   }
 
   onStepProgress({ element, index, progress }) {
     // console.log('progress: element, index, progress', element, index, progress);
-    select(element).classed(C.ACTIVE, progress < fadeOutThreshold);
+    // select(element).classed(C.ACTIVE, progress < fadeOutThreshold && progress > fadeInThreshold);
   }
 
   onStepExit({ element, index, direction }) {
-    select(element).classed(C.ACTIVE, false);
     // console.log('exit: element, index, direction', element, index, direction);
+    // select(element).classed(C.ACTIVE, false);
+    // this.header
+    //   .classed(C.FADE_IN, false);// remove class to allow css animation to be re-triggered
   }
 
   setUpSection() {
@@ -88,7 +100,7 @@ export default class Section {
       .attr('class', C.STICKY);
 
     // create header
-    this.sticky.append('h2').attr('class', C.SECTION_HEADER)
+    this.header = this.sticky.append('div').attr('class', C.SECTION_HEADER)
       .html(data.title);
 
     // create header
@@ -102,15 +114,21 @@ export default class Section {
       .selectAll(`.${C.STEP}`).data(data.steps)
       .join('div')
       .attr('class', C.STEP)
-      .attr('data-step', (d) => d.step_id);
+      .attr(KEYS.DATA_STEP, (d) => getSectionHash(this.section, d.step_id));
 
-    this.steps.append('h3')
-      .attr('class', C.STEP_HEADER)
-      .html((d) => d.header);
-
-    this.steps.append('div')
-      .attr('class', C.STEP_TEXT)
-      .html((d) => d.text);
+    this.steps.selectAll('.text')
+      .data((d) => [d])
+      .join('div')
+      .attr('class', 'text')
+      .classed('empty', (d) => !d.text)
+      .classed('vertical-center', (d) => d.isMiddle) // for headings that should be in the middle
+      .html((d) => d.text)
+      .filter((d) => d.subtitle)
+      .selectAll(C.SUBTITLE)
+      .data((d) => [d.subtitle])
+      .join('div')
+      .attr('class', C.SUBTITLE)
+      .html((d) => d);
   }
 
   setUpGraphic() {
@@ -120,10 +138,10 @@ export default class Section {
   // generic window resize listener event
   handleResize() {
     // 1. update height of step elements
-    const stepH = Math.floor(window.innerHeight * 0.75);
+    const stepH = Math.floor(window.innerHeight) * 0.7;
     this.steps.style('height', `${stepH}px`);
 
-    const figureHeight = window.innerHeight * 0.75;
+    const figureHeight = window.innerHeight;
     const figureMarginTop = (window.innerHeight - figureHeight) / 2;
 
     this.sticky

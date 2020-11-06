@@ -1,11 +1,219 @@
 @import "../../styling/variables";
 
-.moving-map{
+.moving-map {
+  position: relative;
 
-  .map{
-    path{
-      fill: $colorLightGrey;
-      stroke: $colorLightGrey;
+  svg {
+    position: relative;
+    .map,
+    .lines,
+    .ntas {
+      opacity: 0;
+      transition: opacity $durationOpacity;
+
+      &.visible {
+        opacity: 1;
+      }
+      path {
+        fill: #eee;
+        stroke: $colorLightGrey;
+        stroke-width: 0.5px;
+
+        &.active {
+          stroke: black;
+          stroke-width: 3px;
+          fill: gainsboro;
+        }
+      }
+
+      &.outline path {
+        stroke-width: 0.25px;
+      }
+
+      &.lines {
+        path {
+          stroke: $colorBlack;
+          stroke-width: 1px;
+          fill: none;
+        }
+      }
+    }
+
+    .selected-ntas {
+      stroke: $colorBlack;
+      transition: opacity $durationOpacity;
+      opacity: 0;
+
+      &.visible {
+        opacity: 1;
+      }
+    }
+
+    .stations {
+      .station {
+        opacity: 0;
+        pointer-events: none;
+        transition: transform $durationMovement, fill $durationOpacity;
+        cursor: pointer;
+
+        circle {
+          transition: transform $durationOpacity;
+          stroke: white;
+          stroke-width: 0.5;
+        }
+
+        &:hover {
+          text {
+            visibility: visible;
+          }
+
+          circle {
+            stroke: $colorBlack;
+          }
+        }
+      }
+
+      &.visible {
+        .station {
+          pointer-events: all;
+          &:not(.highlight) {
+            opacity: 0.6;
+            fill: $colorLightGrey;
+            pointer-events: none;
+          }
+
+          &.highlight,
+          &:hover {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+  .annotations {
+    .annotation {
+      stroke: $colorMidGrey;
+      transition: transform $durationMovement;
+    }
+  }
+
+  .overlay {
+    position: absolute;
+    opacity: 0;
+    overflow: hidden;
+
+    &.visible {
+      opacity: 1;
+    }
+
+    .annotation-label {
+      color: $colorMidGrey;
+      font-size: $fontSizeSmall;
+      position: absolute;
+      transition: transform $durationMovement;
+      max-width: 7em;
+      padding-left: 0.5em;
+
+      &.y {
+        text-align: right;
+      }
+    }
+
+    .color-legend {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      opacity: 0;
+
+      &.visible{
+        opacity: 1;
+      }
+    }
+  }
+
+  .x,
+  .y {
+    opacity: 0;
+    transition: opacity $durationOpacity, transform $durationMovement;
+    &.axis-label.y{
+      font-family: $fontBold;
+    }
+
+    &.visible {
+      opacity: 1;
+    }
+  }
+
+  .nta-annotation {
+    position: absolute;
+    width: 175px;
+    padding: 1em;
+    opacity: 0;
+    transition: opacity 0 0;
+    text-transform: capitalize;
+
+    &.visible {
+      transition: opacity $durationOpacity $durationMovement;
+      opacity: 1;
+    }
+
+    .name {
+      font-family: $fontExtraBold;
+      font-size: $fontSizeBase;
+    }
+    .stats-grid{
+      display: grid;
+      grid-template-columns: auto auto;
+      row-gap: .15em;
+
+      .stat {
+        grid-column: 1/3;
+        align-items: center;
+        font-size: $fontSizeSmall;
+        display: grid;
+        column-gap: .5em;
+        grid: inherit;
+
+        .key {
+          font-family: $fontRegular;
+        }
+        .value {
+          font-family: $fontBold;
+          text-align: right;
+          align-self: end;
+        }
+      }
+    }
+  }
+
+  .Tooltip {
+    .content {
+      max-width: 150px;
+
+      .station-name {
+        color: $colorBlack;
+        font-family: $fontBold;
+        font-size: $fontSizeSmall;
+      }
+
+      .neighborhood {
+        white-space: normal;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: min-content 1fr;
+        font-size: $fontSizeXSmall;
+        column-gap: 0.5em;
+        text-transform: capitalize;
+
+        .stat-val {
+          font-family: $fontBold;
+        }
+      }
+    }
+    .swatches {
+      white-space: normal;
     }
   }
 }

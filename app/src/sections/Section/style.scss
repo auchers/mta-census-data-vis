@@ -1,0 +1,121 @@
+@import "../../styling/variables.scss";
+
+section.section {
+  position: relative;
+
+  .sticky {
+    position: sticky;
+    display: flex;
+    flex-direction: column;
+    padding:$controlBarHeight 0.5em;
+
+    .section-header {
+      opacity: 0;
+      transition: opacity $durationOpacity;
+      width: 100%;
+      font-family: $fontLight;
+      font-size: $fontSizeBase;
+      // height: 4em;
+      flex-shrink: 0; // don't collapse when text empty
+      font-weight: unset;
+      padding: 0 1em 1em 1em;
+      display: flex;
+      align-items: center;
+
+      &.fade-in {
+        opacity: 1;
+      }
+    }
+
+    .graphic {
+      width: 100%;
+      height: 100%;
+      // flex: 1;
+      position: relative;
+
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+  }
+  .article {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: relative;
+    pointer-events: none;
+
+    .step {
+      width: 100%;
+      min-height: 500px;
+      margin-bottom: 100vh; // used to add some space for transitions between steps
+
+      .text {
+        width: 100%;
+        max-width: 100%;
+        position: sticky;
+        top: 1em;
+        margin: 1rem;
+        padding: .5em 0 1em 0;
+        margin: 0 auto;
+        font-family: $fontBold;
+        font-size: $fontSizeBase;
+        z-index: 3;
+        pointer-events: all;
+
+        &.vertical-center {
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: $fontSizeXLarge;
+        }
+
+        &:not(.empty) {
+          background-color: $colorBackground;
+          border-top: 2px solid black;
+
+          &.vertical-center{
+            border-top: $thickBorderWidth solid black;
+          }
+        }
+
+        .subtitle {
+          font-size: $fontSizeSmall;
+          font-family: $fontLight;
+          margin-top: 1em;
+        }
+
+        a {
+          text-decoration: underline;
+          color: $colorDarkBlue;
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+
+      &.active {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  section.section {
+    .article {
+      .step {
+        .text {
+          font-size: .8rem;
+
+          &.vertical-center {
+            font-size: $fontSizeLarge;
+          }
+        }
+      }
+    }
+  }
+}

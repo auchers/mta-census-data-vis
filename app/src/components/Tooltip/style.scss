@@ -1,0 +1,36 @@
+
+@import "../../styling/variables";
+
+.Tooltip{
+  position: absolute;
+  top: 0;
+  transition: transform 500ms, opacity 500ms;
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  width: min-content;
+
+  svg.tail{
+    position: absolute;
+    top:0;
+    fill: white;
+  }
+
+  .content{
+    padding: .75em;
+    box-shadow: $boxShadow;
+    border-radius: 5px;
+    white-space: nowrap;
+    color: $colorMidGrey;
+    font-size: $fontSizeSmall;
+    background-color: white;
+  }
+
+  &.no-transition{
+    transition: none;
+  }
+
+  &.visible{
+    opacity: 1;
+  }
+}

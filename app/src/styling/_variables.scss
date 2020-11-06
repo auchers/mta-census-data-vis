@@ -3,14 +3,13 @@ $fontRegular: "Helvetica Neue Regular";
 $fontBold: "Helvetica Neue Bold";
 $fontExtraBold: "Helvetica Neue Condensed Black";
 $fontLight: "Helvetica Neue Light";
-$fontThin: "Helvetica Neue Thin";
-$fontMedium: "Helvetica Neue Medium";
 
-$fontSizeBase: 16px;
-$fontSizeLarge: 1.618 * $fontSizeBase;
+$fontSizeBase: 1rem;
+$fontSizeMid: 1.3rem;
+$fontSizeLarge: 1.618rem;
 $fontSizeXLarge: 1.618 * $fontSizeLarge;
 $fontSizeXXLarge: 1.618 * $fontSizeXLarge;
-$fontSizeSmall: $fontSizeBase / 1.618;
+$fontSizeSmall: 0.6180rem;
 $fontSizeXSmall: $fontSizeSmall / 1.618;
 
 /** COLORS */
@@ -19,22 +18,32 @@ $colorBlack: #000;
 $colorYellow: #E5A139;
 $colorDarkGrey: #707070;
 $colorLightGrey: #ccc;
+$colorMidGrey: #777;
+$colorDarkBlue: #0039A6;
+$boxShadow: 0px 3px 6px -3px $colorMidGrey;
+$colorDarkBlue: #0039A6;
+$colorPurple: #B933AD;
 
 /** SPACING/MARGINS/PADDING */
 $maxTextWidth: 20rem;
+$controlBarHeight: 120px;
+$thickBorderWidth: 5px;
 
 /** TRANSITIONS */
+$durationOpacity: 500ms;
+$durationMovement: 1500ms;
+@keyframes fade-in {
+  0%{
+    opacity: 0;
+  }
 
-/** DEFAULT ELEMENTS */
-
-h1{
-  font-family: $fontBold;
-  font-size: $fontSizeXXLarge;
-  max-width: $maxTextWidth;
+  100%{
+    opacity: 1;
+  }
 }
 
-h2{
-  font-family: $fontBold;
-  font-size: $fontSizeXLarge;
-  max-width: $maxTextWidth;
+:export {
+  durationOpacity: $durationOpacity;
+  durationMovement: $durationMovement;
+  controlBarHeight: $controlBarHeight;
 }

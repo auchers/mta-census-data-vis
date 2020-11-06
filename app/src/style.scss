@@ -1,62 +1,117 @@
 @import "./styling/variables";
 
-body{
+body {
   font-family: $fontRegular;
   background-color: $colorBackground;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
 }
 
-#app{
+#app {
   padding: 1rem;
-  max-width: 900px;
+  max-width: 700px;
   margin: 0 auto;
+  width: 100vw;
+  box-sizing: border-box;
 
-  *{
+  * {
     box-sizing: border-box;
   }
 }
 
-section#intro{
-  height: 100vh;
-  display: flex;
-  align-items: center;
+/** DEFAULT ELEMENTS */
 
-  h1{
-    margin: 0;
+h1 {
+  font-family: $fontBold;
+  font-size: $fontSizeXXLarge;
+  // max-width: 40rem;
+}
+
+h2 {
+  font-family: $fontBold;
+  font-size: $fontSizeXLarge;
+  // max-width: $maxTextWidth;
+}
+
+.axis {
+  color: $colorMidGrey;
+
+  text.label {
+    text-anchor: middle;
+    fill: $colorBlack;
+    text-transform: uppercase;
+  }
+  path,
+  line {
+    stroke: $colorMidGrey;
+    stroke-width: 0.25px;
   }
 }
+// for annotations and axes labels
+// use divs for these for better text formatting options
+.overlay {
+  width: 100%;
+  pointer-events: none;
+  div.axis-label,
+  div.axis-title {
+    font-size: $fontSizeSmall;
+    position: absolute;
+    top: 0;
+    transform-origin: center;
+    width: max-content;
+    padding-bottom: 1em;
+    box-sizing: border-box;
 
-.section {
-  position: relative;
-}
-
-.section-header{
-  max-width: 40rem;
-  background-color: $colorBackground;
-}
-
-.sticky{
-  position: sticky;
-  display: flex;
-  flex-direction: column;
-
-  .graphic{
-    width: 100%;
-    height: 100%;
-  }
-}
-
-.article{
- max-width: $maxTextWidth;
- margin: 0 auto;
-
-  .step{
-    position: relative;
-    min-height: 500px;
-    transition: opacity 500ms;
-    opacity: 0;
-
-    &.active{
-      opacity: 1;
+    &.no-wrap {
+      white-space: nowrap;
     }
   }
+}
+
+.label {
+  font-size: $fontSizeSmall;
+  font-family: $fontLight;
+}
+
+.scroll-prompt-wrapper {
+  // to be same width as app
+  max-width: inherit;
+  width: inherit;
+  position: fixed;
+  top: 0;
+  font-size: $fontSizeSmall;
+  text-transform: uppercase;
+
+  .scroll-prompt {
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    padding: 1rem;
+    width: min-content;
+    text-align: center;
+    opacity: 0;
+
+    &.visible {
+      opacity: 0.3;
+    }
+
+    &:not(.bottom) {
+      cursor: pointer;
+      &:hover {
+        opacity: 1;
+      }
+    }
+    &.bottom {
+      top: 80vh;
+    }
+  }
+}
+
+@keyframes fadeToYellow {
+  to {
+    color: $colorYellow;
+  }
+}
+
+@media (max-width: 480px) {
 }

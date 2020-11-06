@@ -1,8 +1,48 @@
 @import "../../styling/variables";
-.Timeline{
-
-  .line{
+.Timeline {
+  .line {
     fill: none;
     stroke: $colorBlack;
+  }
+
+  .annotation,
+  .annotation-label {
+    opacity: 0;
+    transition: opacity 500ms;
+
+    circle {
+      fill: $colorYellow;
+      opacity: 0.8;
+      cursor: pointer;
+    }
+
+    &.visible {
+      opacity: 1;
+    }
+    &.faded {
+      opacity: 0.6;
+    }
+  }
+  .annotation-label {
+    position: absolute;
+    transform-origin: center;
+    transform: translate(0%, -3em);
+    text-transform: uppercase;
+    font-size: $fontSizeSmall;
+    font-family: $fontLight;
+    fill: $colorDarkGrey;
+    cursor: pointer;
+    max-width: 120px;
+    // margins attempt to increase hover field of text
+    // TODO: revisit
+    margin-bottom: 2em;
+    margin-left: 2em;
+
+    &.faded{
+      opacity: 0;
+      &:hover{
+        opacity: 1;
+      }
+    }
   }
 }

@@ -1,8 +1,12 @@
 import { Store } from 'redux';
-import Section from '~sections/Section';
-import { SectionDataType } from '~utils/types';
-import { SECTIONS as S } from '~utils/constants';
-import MovingMap from '~components/MovingMap';
+import { select } from 'd3';
+import * as A from '../../redux/actions/creators';
+import Section from '../Section/index';
+import { SectionDataType, StepDataType } from '../../utils/types';
+import {
+  SECTIONS as S, DIRECTIONS as D, VIEWS as V, KEYS,
+} from '../../utils/constants';
+import MovingMap from '../../components/MovingMap/index';
 
 interface Props { data: SectionDataType, store: Store }
 
@@ -11,6 +15,25 @@ export default class SectionMovingMap extends Section {
 
   constructor({ data, store }: Props) {
     super({ data, store, sectionName: S.S_MOVING_MAP });
+    this.onStepEnter = this.onStepEnter.bind(this);
+    this.controller = {
+      0: () => store.dispatch(A.setView(V.BLANK)),
+      1: () => store.dispatch(A.setView(V.MAP_OUTLINE)),
+      2: () => store.dispatch(A.setView(V.MAP_DOTS_LINES_NTAS)),
+      4: () => store.dispatch(A.setView(V.ZOOM_SOHO)),
+      5: () => store.dispatch(A.setView(V.ZOOM_SOHO)),
+      6: () => store.dispatch(A.setView(V.ZOOM_BROWNSVILLE)),
+      7: () => store.dispatch(A.setView(V.ZOOM_BROWNSVILLE)),
+      8: () => store.dispatch(A.setView(V.MAP_DOTS_LINES)),
+      9: () => store.dispatch(A.setView(V.SWARM)),
+      10: (key:string) => store.dispatch(A.setView(V.SCATTER, key)),
+      11: (key:string) => store.dispatch(A.setView(V.SCATTER, key)),
+      12: (key:string) => store.dispatch(A.setView(V.SCATTER, key)),
+      13: (key:string) => store.dispatch(A.setView(V.SCATTER, key)),
+      14: (key:string) => store.dispatch(A.setView(V.SCATTER, key)),
+      16: () => store.dispatch(A.setView(V.MAP_WITH_CONTROLS)),
+    };
+    this.init();
   }
 
   setUpGraphic() {
@@ -19,6 +42,16 @@ export default class SectionMovingMap extends Section {
       parent: this.graphic,
     });
     this.movingMap.init();
+  }
+
+  onStepEnter({ element, index, direction }) {
+    super.onStepEnter({ element, index, direction });
+    if (this.controller[index]) {
+      const data = select(element).data()[0] as StepDataType;
+      if (data[KEYS.DOT_POSITION] && data[KEYS.DOT_POSITION][KEYS.Y_KEY]) {
+        this.controller[index](data[KEYS.DOT_POSITION][KEYS.Y_KEY]);
+      } else this.controller[index]();
+    }
   }
 
   handleResize() {

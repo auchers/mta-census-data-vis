@@ -1,0 +1,48 @@
+@import "../../styling/variables";
+
+.swatch{
+  width: 1.5em;
+  height: 1.5em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1ex;
+  border-radius: 100%;
+  color: white;
+  padding: 1ex;
+  margin: .25em;
+  font-size: $fontSizeSmall;
+  font-family: $fontBold;
+
+  &.blue{
+    background-color: #0039A6;
+  }
+  &.orange{
+    background-color: #FF6319;
+  }
+  &.lightGreen{
+    background-color: #6CBE45;
+  }
+  &.brown{
+    background-color: #996633;
+  }
+  &.grey{
+    background-color: #A7A9AC;
+  }
+  &.yellow{
+    background-color: #FCCC0A;
+    color: $colorBlack;
+  }
+  &.darkGrey{
+    background-color: #808183;
+  }
+  &.red{
+    background-color: #EE352E;
+  }
+  &.darkGreen{
+    background-color: #00933C;
+  }
+  &.purple{
+    background-color: #B933AD;
+  }
+}

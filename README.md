@@ -1,68 +1,48 @@
-# Data Sources
+# Visualizing MTA Ridership Changes During COVID-19
 
-### American Communities Census:
+## Repository Structure
 
-pulled [here](https://data.census.gov/cedsci/table?d=ACS%205-Year%20Estimates%20Data%20Profiles&table=DP03&tid=ACSDP5Y2018.DP03&g=0400000US36&hidePreview=true&moe=false) selecting all census tracts in the 5 buroughs.
+This repository holds all aspects of [MTA ridership project](http://projects.two-n.com/mta/).
 
-### Stations CSV (with Lat/Long)
+- `/data` - contains partial datasets that were used for research and analysis in this project. Note: due to the size of files, not all were commited to git, but the sources for all data sources (past and present) can be found in the [data folder README](./data/README.md).
 
-http://web.mta.info/developers/data/nyct/subway/Stations.csv
+- `/processingScripts` - contains python processing scripts used to pull and restructure the data for the visualization. There are some older jupyter notebook files in there that were used for data exploration, but the final scripts that contributed to the data in the application are all `.py` files.
 
-### 2010 Census Tract Shapefile
+  The primary scripts used were:
+  - [`mtaSwipes.py`](./processingScripts/mtaSwipes.py): scrapes MetroCard swipes data from [MTA developer's page](http://web.mta.info/developers/fare.html) and compiles all into a single dataset.
+  - [`acsByNTA.py`](./processingScripts/acsByNTA.py): filters [pre-downloaded census data](https://www1.nyc.gov/site/planning/data-maps/open-data/dwn-acs-nta.page) for relevant metrics. Spatially joins [MTA station locations](http://web.mta.info/developers/data/nyct/subway/Stations.csv) into their surrounding Neighborhood Tabulation Areas. Saves `stations_with_ntas.csv` and `acs_nta.geojson` into `data/output` folder.
 
-https://data.cityofnewyork.us/City-Government/2010-Census-Tracts/fxpq-c8ku
+- `/app` - contains all the font-end application code.
 
-### MTA Turnstile Data 2020
+## App Structure
 
-https://data.ny.gov/Transportation/Turnstile-Usage-Data-2020/py8k-a8wg
+This app was built with TypeScript, leveraging Webpack for code bundling.
+In order to run, first navigate into the `/app` folder (`cd app`). From there you will have the following scripts available:
 
-### Station ID Linking
+#### `yarn start`
+starts a hot-reloading webpack development server
 
-crowdsourced from here:
-https://groups.google.com/d/msg/mtadeveloperresources/VYReLOiV5Jg/QDbrYlG_AgAJ
+#### `yarn build`
+creates a production level code build, saved to `app/dist` folder
 
-partially hand-linked in this doc:
-https://docs.google.com/spreadsheets/d/1yLIF85YHxMLt-aUuPjY3Cn0TlWEUXQz7E4xm8du-LZE/edit#gid=0
+#### `yarn deploy`
+deploys `dist` folder to `project.two-n.com`
 
-### Lines GIS Data
+#### `yarn archie`
+starts up an [aml-gdoc-server](https://github.com/Quartz/aml-gdoc-server) to pull structured JSON from the [google doc](https://docs.google.com/document/d/1Dc9L6cVkBEpUPbp2vSby0Mpx40MzCeKqe_4cX5I11oE/edit?usp=sharing) that contains the application's narrative content.
 
-https://data.cityofnewyork.us/Transportation/Subway-Lines/3qz8-muuu
+To save an updated version, navigate to [`http://127.0.0.1:6006/1Dc9L6cVkBEpUPbp2vSby0Mpx40MzCeKqe_4cX5I11oE`](http://127.0.0.1:6006/1Dc9L6cVkBEpUPbp2vSby0Mpx40MzCeKqe_4cX5I11oE) and save the resulting `.json` to `app/public/content/narrativeCopy.json`.
 
-### Hospitals
 
-Pulled from [nyc PLUTO](https://www1.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page) dataset. Filtered out hospitals and clinics using building class code of `I*`, informed by the [data dictionary](https://www1.nyc.gov/assets/planning/download/pdf/data-maps/open-data/pluto_datadictionary.pdf?v=20v3).
+## Primary Datasources
 
-### MTA Schedule GTFS Data
+- Ridership data comes from [MTA MetroCard Swipe Data](http://web.mta.info/developers/fare.html).
+- American Community Survey (ACS) by Neighborhood Tabulation Area (NTA) data comes from [NYC Planning Aggregates](https://www1.nyc.gov/site/planning/data-maps/open-data/dwn-acs-nta.page).
+- MTA station locations come from [this MTA dataset](http://web.mta.info/developers/data/nyct/subway/Stations.csv).
+- Narrative copy is maintained and edited in [this google doc](https://docs.google.com/document/d/1Dc9L6cVkBEpUPbp2vSby0Mpx40MzCeKqe_4cX5I11oE/edit?usp=sharing).
 
-http://web.mta.info/developers/developer-data-terms.html#data --> 'GTFS'-->'New York City Transit Subway' (Updated April 29, 2020)
+## Additional Tools/Resources
 
-```sh
-# filter for hospitals and clinics based on building code
-# remember to re-project it to the standard projection
-ogr2ogr -where "BldgClass LIKE 'I%'" -t_srs WGS84 ../output/hospitals.geojson  ./MapPLUTO.shp MapPLUTO
-```
-
-### NYC NTA(Neighborhood Tabulation Areas)
-https://data.cityofnewyork.us/City-Government/Neighborhood-Tabulation-Areas-NTA-/cpf4-rkhq
-
-`geo2topo output/nta.json > output/nta_topo.json`
-
-## Process
-
-## Notes
-
-### Shapefile to GeoJSON using [GDAL](https://gdal.org/download.html)
-
-Just to be safe I first created a virtual environment for the gis dependencies
-
-#### `conda create gis`
-
-for [reference](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html): can list them all using `conda env list`
-
-#### `conda activate gis`
-
-#### `conda install gdal`
-
-use [Ogr2ogr](https://gdal.org/programs/ogr2ogr.html) to convert from `shapefile` to `geojson`
-
-### `ogr2ogr output/censusTracts.geojson [pathTo.shp]`
+- [ArchiML](http://archieml.org/) to turn unstructured google doc data into structured JSON. Leveraged [aml-gdoc-server](https://github.com/Quartz/aml-gdoc-server) to be able to connect directly to Google Drive.
+- [Scrollama](https://github.com/russellgoldenberg/scrollama) for scroll triggers.
+- [GDAL](https://gdal.org/) for geographic transformations.

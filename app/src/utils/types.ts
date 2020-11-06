@@ -1,10 +1,16 @@
-import { SECTIONS } from './constants';
+import { SECTIONS, VIEWS } from './constants';
 
 export interface State {
   sectionData: AppDataType
-  turnstileData: null | TurnstileData[],
-  mapData: any,
-  stationData: null | StationData[]
+  swipeData: null | SwipeData[],
+  stationData: null | StationData[],
+  mapData: null | MapData,
+  location: string | null,
+  view: VIEWS,
+  yKey: null | string,
+  selectedWeek: string,
+  selectedLine: string, // line_name
+  selectedNta: string, // ntaCode
 }
 
 export type AppDataType = {
@@ -14,65 +20,98 @@ export type AppDataType = {
 export type SectionDataType = {
   steps: StepDataType[],
   title: string
+  subtitle?: string;
+  datasources?: SectionDataType[]
 }
 
 export type StepDataType = {
   step_id: number,
   header: string,
-  text: string
+  text: string,
+  date: string,
+  'dot-position': {
+    [key: string]: string
+  }
+  [key: string]: string | number
 }
 
-export interface TurnstileData {
-  station_code: string;
-  station: string;
-  line_name: string;
-  datetime: Date;
-  entries_sum: number;
-  entries_avg: number
-  exits_sum: number
-  exits_avg: number
-  morning_entries_sum: number
-  morning_entries_avg: number
+export interface SwipeData {
+  STATION: string;
+  REMOTE: string;
+  WEEK: Date;
+  TOTAL: number;
 }
 
 export interface StationTimelineItem {
   date: string;
-  entries: number;
-  morning_entries: number;
-  entries_pct_chg: number;
-  morning_pct_chg: number;
+  swipes: number;
+  swipes_pct_chg: number;
 }
 
 export interface StationSummary {
-  entries_pct_chg: number;
-  morning_pct_chg: number;
-  entries_avg_pre:number;
-  morning_avg_pre:number;
-  entries_avg_post:number;
-  morning_avg_post:number;
-  entries_total:number;
-  morning_total:number;
+  swipes_pct_chg: number;
+  swipes_avg_pre: number;
+  swipes_avg_post: number;
 }
 
 export interface ProcessedStation {
   station: string;
-  benchmarks: Map<string, {[key:string]: number}>
-  timeline: StationTimelineItem[],
+  remote: string;
+  timeline: Map<string, StationTimelineItem>,
   summary: StationSummary
 }
 
 export interface Controller {
-  [key:number]: {
-    [key:string]: ()=> void
+  [key: number]: {
+    [key: string]: () => void
   }
 }
 
 export interface StationData {
   station_code: string;
+  unit: string; // Field to match stationss on
   station: string;
+  BoroCode: number;
+  BoroName: number;
+  NTACode: string;
+  NTAName: string;
   GTFS_stop_id: string;
   line_name: string;
   ct2010: string;
   lat: number;
   long: number;
+}
+
+export interface MapData {
+  type: string;
+  arcs: number[][];
+  bbox: number[];
+  objects: {
+    acs_nta: TopoJSONObjectType;
+    'mapOutline': TopoJSONObjectType;
+    'subway-lines': TopoJSONObjectType;
+  }
+}
+
+interface TopoJSONObjectType {
+  type: string;
+  geometries: {
+    type: string;
+    arcs: number[];
+    properties: {
+      [key: string]: string | number;
+      NTACode: string;
+      NTAName: string;
+      BoroCode: number;
+      BoroName: string;
+
+    }
+  }[]
+}
+
+export interface TimelineAnnotation {
+  date: Date,
+  step_id: number,
+  label: string,
+  duration: number,
 }
